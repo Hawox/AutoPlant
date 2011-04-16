@@ -22,23 +22,31 @@ public class TreePlanterBlockListener extends BlockListener{
  
     @Override
 	public void onBlockBreak(BlockBreakEvent event){
-    	Block block = event.getBlock();
-    	Player player = event.getPlayer();
+    	if(plugin.isEnabled()){
+    		Block block = event.getBlock();
+    		Player player = event.getPlayer();
     		//Okay so lets check if the player has broken a log block!
     		if(block.getType() == Material.LOG){
-    			if(plugin.isEnabled() == true){
-					//block is broken! Now lets see if this block was on a piece of dirt...
-    				Block block_under_me = block.getFace(BlockFace.DOWN);
-    				if(   (block_under_me.getType() ==  Material.DIRT)  ||  (block_under_me.getType() ==  Material.GRASS) ) {
-    					//woot! on grass here so lets plant the sapling! wooooo!
-    					PlantMe(block);
-    					if(plugin.isTelluser())
-    						player.sendMessage(ChatColor.GREEN + plugin.getTellUserPlanted());
-    				}
+				//block is broken! Now lets see if this block was on a piece of dirt...
+    			Block block_under_me = block.getFace(BlockFace.DOWN);
+    			if(   (block_under_me.getType() ==  Material.DIRT)  ||  (block_under_me.getType() ==  Material.GRASS) ) {
+    				//woot! on grass here so lets plant the sapling! wooooo!
+    				PlantMe(block);
+    				if(plugin.isTelluser())
+    					player.sendMessage(ChatColor.GREEN + plugin.getTellUserPlanted());
     			}
     		}//Not a log, maybe they are trying to break a protected sapling?
     		else if(block.getType() == Material.SAPLING){
-    			if(plugin.isEnabled() == true){
+    			if(plugin.getProtect().contains(block)){
+    				event.setCancelled(true);
+    				if(plugin.isTelluserProtected())
+    					player.sendMessage(ChatColor.GREEN + plugin.getTellUserProtected());
+    			}
+    		}//How about the dirt under the sapling?
+    		else if(block.getType() == Material.DIRT){
+    			//The sapling is one above the dirt, so get the block there instead
+    			Block sap = block.getFace(BlockFace.UP);
+    			if(sap.getType() == Material.SAPLING){
     				if(plugin.getProtect().contains(block)){
     					event.setCancelled(true);
     					if(plugin.isTelluserProtected())
@@ -46,6 +54,7 @@ public class TreePlanterBlockListener extends BlockListener{
     				}
     			}
     		}
+    	}
 	}
     
     @Override
