@@ -1,0 +1,16 @@
+#Delay from log break to the sapling being planted (in milliseconds) 
+Plant_Delay: 1000
+#How long the sapling is protected after this plugin plants it (in milliseconds)
+Protect_Time: 1000
+
+#When true the plugin will autoplant a burning log
+Replant_Burned_Tree: true
+
+#If these are true the the text in the variables below will be shown
+Tell_User_Planting: false
+Tell_User_Protected: true
+
+#The message that is sent to the player when a sapling is added to the play queue
+Being_Planted_Text: A new sapling will arrive in one moment
+#The message that is sent to the player when they try to break the recently planted/protected sapling
+Protected_Text: This sapling is protected from jerks like you!
