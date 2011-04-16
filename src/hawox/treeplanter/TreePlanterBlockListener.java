@@ -43,15 +43,13 @@ public class TreePlanterBlockListener extends BlockListener{
     					player.sendMessage(ChatColor.GREEN + plugin.getTellUserProtected());
     			}
     		}//How about the dirt under the sapling?
-    		else if(block.getType() == Material.DIRT){
+    		else if( block.getFace(BlockFace.UP).getType() == Material.SAPLING ){
     			//The sapling is one above the dirt, so get the block there instead
     			Block sap = block.getFace(BlockFace.UP);
-    			if(sap.getType() == Material.SAPLING){
-    				if(plugin.getProtect().contains(block)){
-    					event.setCancelled(true);
-    					if(plugin.isTelluserProtected())
-    						player.sendMessage(ChatColor.GREEN + plugin.getTellUserProtected());
-    				}
+    			if(plugin.getProtect().contains(sap)){
+    				event.setCancelled(true);
+    				if(plugin.isTelluserProtected())
+    					player.sendMessage(ChatColor.GREEN + plugin.getTellUserProtected());
     			}
     		}
     	}
