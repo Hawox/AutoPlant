@@ -22,8 +22,12 @@ public class TreePlanterBlockListener extends BlockListener{
  
     @Override
 	public void onBlockBreak(BlockBreakEvent event){
+    	//DEBUG
+//    	System.err.println("Block Data:" + event.getBlock().getData());
+    	
     	if(plugin.isEnabled()){
     		Block block = event.getBlock();
+    		byte id = block.getData();
     		Player player = event.getPlayer();
     		//Okay so lets check if the player has broken a log block!
     		if(block.getType() == Material.LOG){
@@ -31,7 +35,7 @@ public class TreePlanterBlockListener extends BlockListener{
     			Block block_under_me = block.getFace(BlockFace.DOWN);
     			if(   (block_under_me.getType() ==  Material.DIRT)  ||  (block_under_me.getType() ==  Material.GRASS) ) {
     				//woot! on grass here so lets plant the sapling! wooooo!
-    				PlantMe(block);
+    				PlantMe(block,id);
     				if(plugin.isTelluser())
     					player.sendMessage(ChatColor.GREEN + plugin.getTellUserPlanted());
     			}
@@ -58,6 +62,7 @@ public class TreePlanterBlockListener extends BlockListener{
     @Override
     public void onBlockBurn(BlockBurnEvent event){
     	Block block = event.getBlock();
+    	byte id = block.getData();
 		//Log?
 		if(block.getType() == Material.LOG){ 
 			if(plugin.isEnabled() == true){
@@ -69,43 +74,36 @@ public class TreePlanterBlockListener extends BlockListener{
 				
 					//It will not replant the block if it is not air, so lets help that burning log out
 					block.setType(Material.AIR);
-					PlantMe(block);				
+					PlantMe(block,id);				
 				}
 			}
 		}
     }
     
     
-    public void PlantMe(Block block){
+    public void PlantMe(Block block, byte data){
 		//store the sapling into a list to replant, replant sapling after set time
     	plugin.getReplant().add(block);
+    	plugin.getReplantData().add(data);
 		//run the timer to load the block
     	
     	if(plugin.getTreeplant_Timer().getPoolSize() < plugin.getTreeplant_Timer().getMaximumPoolSize()){
     		plugin.getTreeplant_Timer().schedule(new Runnable() {
 				public void run() {
-					if(!(plugin.getReplant().isEmpty())){
+					if( (!(plugin.getReplant().isEmpty())) && (!(plugin.getReplantData().isEmpty())) ){
 						Block loadedBlock = plugin.getReplant().get(0);
+						byte savedData = plugin.getReplantData().get(0);
 						//remove it from the list
 						plugin.getReplant().remove(0);
+						plugin.getReplantData().remove(0);
 						//protect it
 						ProtectMe(loadedBlock);
 						//made into a sap
-						if( (loadedBlock.getType().equals(Material.AIR)) || (loadedBlock.getType().equals(Material.FIRE)) ) //just incase it was on fire
+						if( (loadedBlock.getType().equals(Material.AIR)) || (loadedBlock.getType().equals(Material.FIRE)) ){ //just incase it was on fire
+							//to keep the saping fitted to the same tree type we just need to keep the datavalue
 							loadedBlock.setType(Material.SAPLING);
-						
-						/* No longer needed! Didn't realized leaves light blocking changed way back when.
-						 * for(int i=loadedBlock.getY(); i < 128; i++){
-							//delete all the leaves in a line to the sky limit
-							if(loadedBlock.getType()==Material.LEAVES){
-								//it's a leaf delete it
-								loadedBlock.setType(Material.AIR);
-								//update on server | Not needed?
-								//etc.getServer().setBlock(leafToDelete);
-							}
-							//go up one
-							loadedBlock = loadedBlock.getFace(BlockFace.UP);
-						}*/
+							loadedBlock.setData(savedData);
+						}
 					}
 				}
 			}, plugin.getdelayTime(), TimeUnit.MILLISECONDS);

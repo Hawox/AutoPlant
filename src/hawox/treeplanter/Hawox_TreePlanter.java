@@ -32,6 +32,7 @@ public class Hawox_TreePlanter extends JavaPlugin{
 	
 	//saplings awaiting planting
 	private ArrayList<Block> replant = new ArrayList<Block>();
+	private ArrayList<Byte> replantData = new ArrayList<Byte>();
 	private ScheduledThreadPoolExecutor treeplant_Timer = new ScheduledThreadPoolExecutor(50);
 
 	//protected saplings awaiting unprotecting
@@ -249,6 +250,14 @@ public class Hawox_TreePlanter extends JavaPlugin{
 
 	public boolean isReplantOnBurn() {
 		return replantOnBurn;
+	}
+
+	public ArrayList<Byte> getReplantData() {
+		return replantData;
+	}
+
+	public void setReplantData(ArrayList<Byte> replantData) {
+		this.replantData = replantData;
 	}
 
 	public void setReplantOnBurn(boolean replantOnBurn) {
